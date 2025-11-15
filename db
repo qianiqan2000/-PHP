@@ -1,0 +1,22 @@
+<?php
+$host = 'localhost'; // 修改为你本地的数据库地址
+$dbname = 'diary_db'; // 数据库名称
+$username = 'root';   // 数据库用户名
+$password = '';       // 数据库密码
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("数据库连接失败: " . $e->getMessage());
+}
+
+if (isset($_GET['fetch']) && is_numeric($_GET['fetch'])) {
+    $id = intval($_GET['fetch']); // 从 GET 获取
+    $stmt = $pdo->prepare("SELECT * FROM journals WHERE id = ?");
+    $stmt->execute([$id]);
+    $journal = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo json_encode($journal);
+    exit();
+}
+?>
